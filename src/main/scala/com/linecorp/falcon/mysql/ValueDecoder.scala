@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets._
 import io.circe.{Decoder => JsonDecoder}
 import io.circe.parser._
 import cats.syntax.either._
+import cats.Functor
 
 class ValueException(s: String) extends RuntimeException(s)
 
@@ -22,6 +23,12 @@ object ValueDecoder {
   }
 
   def fail(s: String) = Failure(new ValueException(s))
+
+  implicit val functor: Functor[ValueDecoder] = new Functor[ValueDecoder] {
+    def map[A, B](d: ValueDecoder[A])(f: A => B): ValueDecoder[B] = ValueDecoder.instance {
+      d.from(_).map(f)
+    }
+  }
 
   implicit val decodeInt: ValueDecoder[Int] = new ValueDecoder[Int] {
     def from(value: Value): Try[Int] = value match {
