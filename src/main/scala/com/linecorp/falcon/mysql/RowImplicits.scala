@@ -13,7 +13,7 @@ trait RowImplicits {
         case None    => ValueDecoder.fail(s"column not found")
       }
 
-    def as[T: RowDecoder]: Try[T] = RowDecoder[T].from(row)
+    def as[T: RowDecoder]: Try[T] = RowDecoder[T].from(row.values)
 
   }
 
