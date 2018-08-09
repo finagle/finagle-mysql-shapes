@@ -1,12 +1,13 @@
 package com.linecorp.falcon.mysql
 
-import scala.util.{Try, Success, Failure}
+import scala.util.{ Try, Success, Failure }
 import com.twitter.finagle.mysql._
 import java.nio.charset.StandardCharsets._
-import io.circe.{Decoder => JsonDecoder}
+import io.circe.{ Decoder => JsonDecoder }
 import io.circe.parser._
 import cats.syntax.either._
 import cats.Functor
+import java.sql.{ Date, Timestamp }
 
 class ValueException(s: String) extends RuntimeException(s)
 
@@ -44,6 +45,20 @@ object ValueDecoder {
     }
   }
 
+  implicit val decodeDate: ValueDecoder[Date] = ValueDecoder.instance {
+    DateValue.unapply(_) match {
+      case Some(date) => Success(date)
+      case None       => ValueDecoder.fail("failed to read java.sql.Date")
+    }
+  }
+
+  implicit val decodeTimestamp: ValueDecoder[Timestamp] = ValueDecoder.instance {
+    TimestampValue.unapply(_) match {
+      case Some(date) => Success(date)
+      case None       => ValueDecoder.fail("failed to read java.sql.Timestamp")
+    }
+  }
+
   // Option
 
   implicit def decodeOption[T: ValueDecoder]: ValueDecoder[Option[T]] =
@@ -53,7 +68,6 @@ object ValueDecoder {
         case _         => ValueDecoder[T].from(value).map(Some(_))
       }
     }
-
 
   // JSON
 
