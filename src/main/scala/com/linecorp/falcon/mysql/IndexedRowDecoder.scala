@@ -8,7 +8,7 @@ trait IndexedRowDecoder[A] extends RowDecoder[A] {
 
   def fromValues(values: Seq[Value]): Try[A]
 
-  def from(row: Row): Try[A] = fromValues(row.values)
+  final def from(row: Row): Try[A] = fromValues(row.values)
 }
 
 object IndexedRowDecoder {
