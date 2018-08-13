@@ -80,7 +80,7 @@ object ValueDecoder {
 
   implicit val decodeTimestamp: ValueDecoder[Timestamp] = ValueDecoder.instance {
     TimestampValue.unapply(_) match {
-      case Some(date) => Success(date)
+      case Some(timestamp) => Success(timestamp)
       case None => ValueDecoder.fail("failed to decode java.sql.Timestamp")
     }
   }

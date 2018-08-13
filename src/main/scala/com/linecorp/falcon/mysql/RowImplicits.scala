@@ -1,19 +1,19 @@
 package com.linecorp.falcon.mysql
 
-import scala.util.{Try, Success, Failure}
+import scala.util.Try
 import com.twitter.finagle.mysql._
 
 trait RowImplicits {
 
   implicit class RichRow(row: Row) {
 
-    def get[T: ValueDecoder](column: String): Try[T] =
+    def get[A: ValueDecoder](column: String): Try[A] =
       row.indexOf(column) match {
-        case Some(x) => ValueDecoder[T].from(row.values(x))
+        case Some(x) => ValueDecoder[A].from(row.values(x))
         case None    => ValueDecoder.fail(s"column not found")
       }
 
-    def as[T: RowDecoder]: Try[T] = RowDecoder[T].from(row.values)
+    def as[A: RowDecoder]: Try[A] = RowDecoder[A].from(row)
 
   }
 
