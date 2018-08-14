@@ -1,7 +1,8 @@
 package com.linecorp.falcon.mysql
 
-import scala.util.Try
+import scala.util.{Try, Success, Failure}
 import com.twitter.finagle.mysql._
+import shapeless._
 
 trait RowImplicits {
 

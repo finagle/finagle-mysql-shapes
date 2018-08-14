@@ -1,7 +1,6 @@
 lazy val finagleVersion = "18.7.0"
 lazy val circeVersion = "0.9.3"
 lazy val catsVersion = "1.1.0"
-lazy val catbirdVersion = "18.6.0"
 lazy val shapelessVersion = "2.3.3"
 lazy val scalaTestVersion = "3.0.5"
 lazy val whiskVersion = "0.9.5"
@@ -39,7 +38,7 @@ lazy val root = (project in file("."))
     commonSettings,
     name := "falcon",
     organization := "com.linecorp",
-    version := "0.1-SNAPSHOT",
+    version := "0.2-SNAPSHOT",
     publishMavenStyle := true,
     libraryDependencies ++= libraries,
     scalafixSettings
