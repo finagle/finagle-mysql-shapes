@@ -1,3 +1,3 @@
 package com.linecorp.falcon.mysql
 
-package object generic extends AutoDerivation
+package object generic extends Instances
