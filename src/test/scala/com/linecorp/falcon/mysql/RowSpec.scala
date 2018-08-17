@@ -3,18 +3,15 @@ package com.linecorp.falcon.mysql
 import org.scalatest._
 import scala.util.{Try, Success, Failure}
 import org.scalatest.concurrent.ScalaFutures
-import io.circe.{ Decoder, Encoder, Json }
+import io.circe.{ Decoder => JsonDecoder, Json }
 import com.linecorp.falcon.mysql.syntax._
 
 class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers {
 
   case class Data(foo: String, bar: Boolean)
 
-  implicit val decodeData: Decoder[Data] =
-    Decoder.forProduct2("foo", "bar")(Data.apply)
-
-  implicit val encodeData: Encoder[Data] =
-    Encoder.forProduct2("foo", "bar")(d => (d.foo, d.bar))
+  implicit val decodeData: JsonDecoder[Data] =
+    JsonDecoder.forProduct2("foo", "bar")(Data.apply)
 
   it should "decode a row into a case class" in { f: FixtureParam =>
 
@@ -43,7 +40,6 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
       o should matchPattern {
         case List(Success((_,_,_))) =>
       }
-
     }
   }
 
@@ -61,7 +57,6 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
       o should matchPattern {
         case List(Success(Foo(_,_,Data(_,_)))) =>
       }
-
     }
   }
 
@@ -85,7 +80,6 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
       o should matchPattern {
         case List(Success(Foo(_,_,Data(_,_)))) =>
       }
-
     }
   }
 
