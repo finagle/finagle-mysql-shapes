@@ -3,14 +3,24 @@ package com.linecorp.falcon.mysql
 import org.scalatest._
 import com.twitter.finagle.mysql.{ Client => MysqlClient }
 import scala.util.{Try, Success, Failure}
-import com.linecorp.falcon.mysql.generic._
 import org.scalatest.concurrent.ScalaFutures
+import io.circe.{ Decoder, Encoder, Json }
 
-class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite {
+class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers {
 
-  case class Foo(id: Long, name: String)
+  case class Data(foo: String, bar: Boolean)
+
+  implicit val decodeData: Decoder[Data] =
+    Decoder.forProduct2("foo", "bar")(Data.apply)
+
+  implicit val encodeData: Encoder[Data] =
+    Encoder.forProduct2("foo", "bar")(d => (d.foo, d.bar))
 
   it should "decode a row into a case class" in { f: FixtureParam =>
+
+    import com.linecorp.falcon.mysql.generic._
+
+    case class Foo(id: Long, name: String)
 
     val result = f.client.select("SELECT * FROM test WHERE id = 1") { row =>
       row.as[Foo]
@@ -26,11 +36,32 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite {
     import com.linecorp.falcon.mysql.generic.tuples._
 
     val result = f.client.select("SELECT * FROM test WHERE id = 1") { row =>
-      row.as[(Long, String)]
+      row.as[(Long, String, Json)]
     }
 
     fromTwitter(result) map { o =>
-      assert(o == List(Success((1, "test"))))
+      o should matchPattern {
+        case List(Success((_,_,_))) =>
+      }
+
+    }
+  }
+
+  it should "decode a row with Json using an implicit decoder" in { f: FixtureParam =>
+
+    import com.linecorp.falcon.mysql.generic._
+
+    case class Foo(id: Long, name: String, data: Data)
+
+    val result = f.client.select("SELECT * FROM test WHERE id = 2") { row =>
+      row.as[Foo]
+    }
+
+    fromTwitter(result) map { o =>
+      o should matchPattern {
+        case List(Success(Foo(_,_,Data(_,_)))) =>
+      }
+
     }
   }
 

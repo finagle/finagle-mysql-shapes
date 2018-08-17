@@ -26,7 +26,8 @@ trait MysqlSuite extends ForAllTestContainer { self: fixture.AsyncTestSuite =>
     """CREATE TABLE test
           (
             id   SERIAL,
-            name VARCHAR(40) NOT NULL
+            name VARCHAR(40) NOT NULL,
+            data JSON
           )
         engine=innodb
         DEFAULT charset=utf8"""
@@ -50,9 +51,12 @@ trait MysqlSuite extends ForAllTestContainer { self: fixture.AsyncTestSuite =>
 
     Await.result(client.modify(schema))
 
-    val result = client
-      .prepare("INSERT INTO test VALUES(?, ?)")
-      .modify(1, "test")
+    val preparedStatement = client.prepare("INSERT INTO test VALUES(?, ?, ?)")
+
+    val result = for {
+      _ <- preparedStatement.modify(1, "test", "{}")
+      _ <- preparedStatement.modify(2, "some", """{"foo": "bar", "bar": true}""")
+    } yield ()
 
     Await.result(result)
 
