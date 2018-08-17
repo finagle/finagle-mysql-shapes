@@ -3,8 +3,8 @@ package com.linecorp.falcon.mysql
 import org.scalatest._
 import com.twitter.finagle.mysql.{ Client => MysqlClient }
 import scala.util.{Try, Success, Failure}
-import com.linecorp.falcon.mysql.generic._
 import org.scalatest.concurrent.ScalaFutures
+import com.linecorp.falcon.mysql.syntax._
 
 class ValueDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite {
 

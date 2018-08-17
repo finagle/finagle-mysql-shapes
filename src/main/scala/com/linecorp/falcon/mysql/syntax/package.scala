@@ -4,9 +4,9 @@ import scala.util.{Try, Success, Failure}
 import com.twitter.finagle.mysql._
 import shapeless._
 
-trait RowImplicits {
+package object syntax {
 
-  implicit class RichRow(row: Row) {
+  implicit class RichRow(val row: Row) extends AnyVal {
 
     def get[A: ValueDecoder](column: String): Try[A] =
       row.apply(column) match {

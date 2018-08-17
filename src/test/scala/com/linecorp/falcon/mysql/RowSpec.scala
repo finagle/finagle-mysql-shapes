@@ -1,10 +1,10 @@
 package com.linecorp.falcon.mysql
 
 import org.scalatest._
-import com.twitter.finagle.mysql.{ Client => MysqlClient }
 import scala.util.{Try, Success, Failure}
 import org.scalatest.concurrent.ScalaFutures
 import io.circe.{ Decoder, Encoder, Json }
+import com.linecorp.falcon.mysql.syntax._
 
 class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers {
 
