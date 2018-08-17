@@ -9,9 +9,9 @@ trait RowImplicits {
   implicit class RichRow(row: Row) {
 
     def get[A: ValueDecoder](column: String): Try[A] =
-      row.indexOf(column) match {
-        case Some(x) => ValueDecoder[A].from(row.values(x))
-        case None    => ValueDecoder.fail(s"column not found")
+      row.apply(column) match {
+        case Some(value) => ValueDecoder[A].from(value)
+        case None        => ValueDecoder.fail(s"column not found")
       }
 
     def as[A: RowDecoder]: Try[A] = RowDecoder[A].from(row)
