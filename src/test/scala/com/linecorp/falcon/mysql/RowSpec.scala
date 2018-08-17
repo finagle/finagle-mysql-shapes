@@ -65,4 +65,28 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
     }
   }
 
+  it should "decode a row with custom decoder" in { f: FixtureParam =>
+
+    case class Foo(id: Long, name: String, data: Data)
+
+    implicit val decoder: RowDecoder[Foo] = RowDecoder.instance { row =>
+      for {
+        id   <- row.get[Long]("id")
+        name <- row.get[String]("name")
+        data <- row.get[Data]("data")
+      } yield Foo(id, name, data)
+    }
+
+    val result = f.client.select("SELECT * FROM test WHERE id = 2") { row =>
+      row.as[Foo]
+    }
+
+    fromTwitter(result) map { o =>
+      o should matchPattern {
+        case List(Success(Foo(_,_,Data(_,_)))) =>
+      }
+
+    }
+  }
+
 }
