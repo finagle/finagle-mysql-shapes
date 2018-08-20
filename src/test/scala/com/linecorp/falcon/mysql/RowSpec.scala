@@ -15,23 +15,42 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
       _ <- data.modify(3, "some", null)
     } yield ()
 
-  case class Data(foo: String, bar: Boolean)
-
-  implicit val decodeData: JsonDecoder[Data] =
-    JsonDecoder.forProduct2("foo", "bar")(Data.apply)
-
   it should "decode a row into a case class" in { client: FixtureParam =>
 
     import com.linecorp.falcon.mysql.generic._
 
-    case class Foo(id: Long, name: String)
+    case class Foo(id: Long, name: String, data: Json)
 
     val result = client.select("SELECT * FROM test WHERE id = 1") { row =>
       row.as[Foo]
     }
 
     fromTwitter(result) map { o =>
-      assert(o == List(Success(Foo(1, "test"))))
+      o should matchPattern {
+        case List(Success(Foo(_,_,_))) =>
+      }
+    }
+  }
+
+  it should "decode a row with a Json column using an implicit decoder" in { client: FixtureParam =>
+
+    import com.linecorp.falcon.mysql.generic._
+
+    case class Data(foo: String, bar: Boolean)
+
+    implicit val decodeData: JsonDecoder[Data] =
+      JsonDecoder.forProduct2("foo", "bar")(Data.apply)
+
+    case class Foo(id: Long, name: String, data: Data)
+
+    val result = client.select("SELECT * FROM test WHERE id = 2") { row =>
+      row.as[Foo]
+    }
+
+    fromTwitter(result) map { o =>
+      o should matchPattern {
+        case List(Success(Foo(_,_,Data(_,_)))) =>
+      }
     }
   }
 
@@ -50,28 +69,12 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
     }
   }
 
-  it should "decode a row with Json using an implicit decoder" in { client: FixtureParam =>
-
-    import com.linecorp.falcon.mysql.generic._
-
-    case class Foo(id: Long, name: String, data: Data)
-
-    val result = client.select("SELECT * FROM test WHERE id = 2") { row =>
-      row.as[Foo]
-    }
-
-    fromTwitter(result) map { o =>
-      o should matchPattern {
-        case List(Success(Foo(_,_,Data(_,_)))) =>
-      }
-    }
-  }
 
   it should "decode a nullable column into an Option" in { client: FixtureParam =>
 
     import com.linecorp.falcon.mysql.generic._
 
-    case class Foo(id: Long, name: String, data: Option[Data])
+    case class Foo(id: Long, name: String, data: Option[Json])
 
     val result = client.select("SELECT * FROM test WHERE id = 3") { row =>
       row.as[Foo]
@@ -86,13 +89,13 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
   it should "decode a row with custom decoder" in { client: FixtureParam =>
 
-    case class Foo(id: Long, name: String, data: Data)
+    case class Foo(id: Long, name: String, data: Json)
 
     implicit val decoder: RowDecoder[Foo] = RowDecoder.instance { row =>
       for {
         id   <- row.get[Long]("id")
         name <- row.get[String]("name")
-        data <- row.get[Data]("data")
+        data <- row.get[Json]("data")
       } yield Foo(id, name, data)
     }
 
@@ -102,7 +105,7 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
     fromTwitter(result) map { o =>
       o should matchPattern {
-        case List(Success(Foo(_,_,Data(_,_)))) =>
+        case List(Success(Foo(_,_,_))) =>
       }
     }
   }
