@@ -3,8 +3,7 @@ package com.linecorp.falcon.mysql
 import com.dimafeng.testcontainers.{ ForAllTestContainer, MySQLContainer }
 import org.scalatest._
 import com.twitter.finagle.Mysql
-import com.twitter.finagle.mysql.{ Client => MysqlClient }
-import com.twitter.finagle.mysql.Parameter._
+import com.twitter.finagle.mysql.{ Client => MysqlClient, PreparedStatement }
 import com.twitter.util.Await
 import java.net.URI
 import scala.concurrent.{Future, Promise}
@@ -22,16 +21,6 @@ trait MysqlSuite extends ForAllTestContainer { self: fixture.AsyncTestSuite =>
     promise.future
   }
 
-  val schema =
-    """CREATE TABLE test
-          (
-            id   SERIAL,
-            name VARCHAR(40) NOT NULL,
-            data JSON
-          )
-        engine=innodb
-        DEFAULT charset=utf8"""
-
   val databaseName = "mysql-test"
 
   override val container = MySQLContainer(
@@ -39,7 +28,20 @@ trait MysqlSuite extends ForAllTestContainer { self: fixture.AsyncTestSuite =>
     databaseName = databaseName
   )
 
-  case class FixtureParam(client: MysqlClient)
+  def schema: String =
+    """CREATE TABLE test
+         (
+           id   SERIAL,
+           name VARCHAR(40) NOT NULL,
+           data JSON,
+           create_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+         )
+       engine=innodb
+       DEFAULT charset=utf8"""
+
+  def populate(data: PreparedStatement): TwitterFuture[Unit]
+
+  type FixtureParam = MysqlClient
 
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
     val url = new URI(container.jdbcUrl.substring(5))
@@ -49,19 +51,14 @@ trait MysqlSuite extends ForAllTestContainer { self: fixture.AsyncTestSuite =>
       .withDatabase(databaseName)
       .newRichClient(s"${url.getHost}:${url.getPort}")
 
+    val data =
+      client.prepare("INSERT INTO test (id, name, data) VALUES(?, ?, ?)")
+
     Await.result(client.modify(schema))
-
-    val preparedStatement = client.prepare("INSERT INTO test VALUES(?, ?, ?)")
-
-    val result = for {
-      _ <- preparedStatement.modify(1, "test", "{}")
-      _ <- preparedStatement.modify(2, "some", """{"foo": "bar", "bar": true}""")
-    } yield ()
-
-    Await.result(result)
+    Await.result(populate(data))
 
     try {
-      self.withFixture(test.toNoArgAsyncTest(FixtureParam(client)))
+      self.withFixture(test.toNoArgAsyncTest((client)))
     } finally {
       for {
         _ <- client.modify("DROP table test")
