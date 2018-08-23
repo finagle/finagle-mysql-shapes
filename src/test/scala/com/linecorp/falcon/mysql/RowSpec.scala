@@ -32,6 +32,26 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
     }
   }
 
+  it should "decode a row into a nested record" in { client: FixtureParam =>
+
+    import com.linecorp.falcon.mysql.generic._
+
+    case class Bar(id: Long, data: Json)
+
+    case class Foo(name: String, bar: Bar)
+
+    val result = client.select("SELECT * FROM test WHERE id = 2") { row =>
+      row.as[Foo]
+    }
+
+    fromTwitter(result) map { o =>
+      o should matchPattern {
+        case List(Success(Foo(_,Bar(_,_)))) =>
+      }
+    }
+  }
+
+
   it should "decode a row with a Json column using an implicit decoder" in { client: FixtureParam =>
 
     import com.linecorp.falcon.mysql.generic._
