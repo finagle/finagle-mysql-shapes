@@ -26,66 +26,66 @@ object ValueDecoder {
   def fail(s: String) = Failure(new ValueException(s))
 
   implicit val functor: Functor[ValueDecoder] = new Functor[ValueDecoder] {
-    def map[A, B](d: ValueDecoder[A])(f: A => B): ValueDecoder[B] = ValueDecoder.instance {
+    def map[A, B](d: ValueDecoder[A])(f: A => B): ValueDecoder[B] = instance {
       d.from(_).map(f)
     }
   }
 
-  implicit val decodeByte: ValueDecoder[Byte] = ValueDecoder.instance {
+  implicit val decodeByte: ValueDecoder[Byte] = instance {
     case ByteValue(b) => Success(b)
     case _ => fail("failed to decode Byte")
   }
 
-  implicit val decodeShort: ValueDecoder[Short] = ValueDecoder.instance {
+  implicit val decodeShort: ValueDecoder[Short] = instance {
     case ShortValue(s) => Success(s)
     case _ => fail("failed to decode Short")
   }
 
-  implicit val decodeInt: ValueDecoder[Int] = ValueDecoder.instance {
+  implicit val decodeInt: ValueDecoder[Int] = instance {
     case IntValue(i) => Success(i)
     case _ => fail("failed to decode Int")
   }
 
-  implicit val decodeLong: ValueDecoder[Long] = ValueDecoder.instance {
+  implicit val decodeLong: ValueDecoder[Long] = instance {
     case LongValue(l) => Success(l)
     case _ => fail("failed to decode Long")
   }
 
-  implicit val decodeBigInt: ValueDecoder[BigInt] = ValueDecoder.instance {
+  implicit val decodeBigInt: ValueDecoder[BigInt] = instance {
     case BigIntValue(bi) => Success(bi)
     case _ => fail("failed to decode BigInt")
   }
 
-  implicit val decodeFloat: ValueDecoder[Float] = ValueDecoder.instance {
+  implicit val decodeFloat: ValueDecoder[Float] = instance {
     case FloatValue(f) => Success(f)
     case _ => fail("failed to decode Float")
   }
 
-  implicit val decodeDouble: ValueDecoder[Double] = ValueDecoder.instance {
+  implicit val decodeDouble: ValueDecoder[Double] = instance {
     case DoubleValue(d) => Success(d)
     case _ => fail("failed to decode Double")
   }
 
-  implicit val decodeString: ValueDecoder[String] = ValueDecoder.instance {
+  implicit val decodeString: ValueDecoder[String] = instance {
     case StringValue(s) => Success(s)
     case _ => fail("failed to decode String")
   }
 
-  implicit val decodeDate: ValueDecoder[Date] = ValueDecoder.instance {
+  implicit val decodeDate: ValueDecoder[Date] = instance {
     DateValue.unapply(_) match {
       case Some(date) => Success(date)
       case None => ValueDecoder.fail("failed to decode java.sql.Date")
     }
   }
 
-  implicit val decodeTimestamp: ValueDecoder[Timestamp] = ValueDecoder.instance {
+  implicit val decodeTimestamp: ValueDecoder[Timestamp] = instance {
     TimestampValue.unapply(_) match {
       case Some(timestamp) => Success(timestamp)
       case None => ValueDecoder.fail("failed to decode java.sql.Timestamp")
     }
   }
 
-  implicit val decodeBigDecimal: ValueDecoder[BigDecimal] = ValueDecoder.instance {
+  implicit val decodeBigDecimal: ValueDecoder[BigDecimal] = instance {
     BigDecimalValue.unapply(_) match {
       case Some(b) => Success(b)
       case None => ValueDecoder.fail("failed to decode java.sql.BigDecimal")
@@ -97,7 +97,7 @@ object ValueDecoder {
   private def isBinary(`type`: Short) =
     Type.TinyBlob to Type.String contains `type`
 
-  implicit val decodeBinary: ValueDecoder[Array[Byte]] = ValueDecoder.instance {
+  implicit val decodeBinary: ValueDecoder[Array[Byte]] = instance {
     case RawValue(typ, _, _, bytes) if isBinary(typ) => Success(bytes)
     case EmptyValue => Success(Array.emptyByteArray)
     case _ => fail("failed to decode binary blob")
@@ -117,7 +117,7 @@ object ValueDecoder {
 
   private[this] val JsonType: Short = 0xf5
 
-  implicit def decodeJson[T: JsonDecoder] = ValueDecoder.instance {
+  implicit def decodeJson[T: JsonDecoder] = instance {
     case RawValue(JsonType, Charset.Binary, _, bytes) =>
       decode[T](new String(bytes, UTF_8)).toTry
     case StringValue(str) =>
