@@ -2,9 +2,10 @@ package com.linecorp.falcon.mysql
 
 import org.scalatest._
 import scala.util.{Try, Success, Failure}
-import io.circe.{ Decoder => JsonDecoder, Json }
+import io.circe.{ Decoder, Json }
 import com.twitter.finagle.mysql._
 import com.linecorp.falcon.mysql.syntax._
+import com.linecorp.falcon.mysql.circe._
 
 class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers {
 
@@ -58,8 +59,8 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
     case class Data(foo: String, bar: Boolean)
 
-    implicit val decodeData: JsonDecoder[Data] =
-      JsonDecoder.forProduct2("foo", "bar")(Data.apply)
+    implicit val decodeData: Decoder[Data] =
+      Decoder.forProduct2("foo", "bar")(Data.apply)
 
     case class Foo(id: Long, name: String, data: Data)
 

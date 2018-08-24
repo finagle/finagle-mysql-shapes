@@ -3,8 +3,6 @@ package com.linecorp.falcon.mysql
 import scala.util.{ Try, Success, Failure }
 import com.twitter.finagle.mysql._
 import java.nio.charset.StandardCharsets._
-import io.circe.{ Decoder => JsonDecoder }
-import io.circe.parser._
 import cats.syntax.either._
 import cats.Functor
 import java.sql.{ Date, Timestamp }
@@ -119,9 +117,9 @@ object ValueDecoder {
 
   implicit def decodeJson[T: JsonDecoder] = instance {
     case RawValue(JsonType, Charset.Binary, _, bytes) =>
-      decode[T](new String(bytes, UTF_8)).toTry
+      JsonDecoder[T].decode(new String(bytes, UTF_8))
     case StringValue(str) =>
-      decode[T](str).toTry
+      JsonDecoder[T].decode(str)
     case _ => fail("failed to read json")
   }
 
