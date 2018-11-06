@@ -34,6 +34,11 @@ object ValueDecoder {
     case _ => fail("failed to decode Byte")
   }
 
+  implicit val decodeBoolean: ValueDecoder[Boolean] = instance {
+    case ByteValue(v)  => Success(v != 0)
+    case _ => fail("failed to decode boolean")
+  }
+
   implicit val decodeShort: ValueDecoder[Short] = instance {
     case ShortValue(s) => Success(s)
     case _ => fail("failed to decode Short")
