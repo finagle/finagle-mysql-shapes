@@ -121,11 +121,13 @@ object ValueDecoder {
   private[this] val JsonType: Short = 0xf5
 
   implicit def decodeJson[T: JsonDecoder] = instance {
-    case RawValue(JsonType, Charset.Binary, _, bytes) =>
+    case RawValue(JsonType, charset, _, bytes) if Charset.isUtf8(charset) =>
+      JsonDecoder[T].decode(new String(bytes, UTF_8))
+    case RawValue(_, Charset.Binary, _, bytes) =>
       JsonDecoder[T].decode(new String(bytes, UTF_8))
     case StringValue(str) =>
       JsonDecoder[T].decode(str)
-    case _ => fail("failed to read json")
+    case v => fail(s"failed to read json: $v")
   }
 
 }

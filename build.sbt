@@ -39,7 +39,7 @@ lazy val root = (project in file("."))
     commonSettings,
     name := "falcon",
     organization := "com.linecorp",
-    version := "0.3-SNAPSHOT",
+    version := "0.3.1-SNAPSHOT",
     publishMavenStyle := true,
     libraryDependencies ++= libraries,
     scalafixSettings
