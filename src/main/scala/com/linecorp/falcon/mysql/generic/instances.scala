@@ -20,10 +20,14 @@ trait Instances extends LowPriorityInstances {
     val column = witness.value.name
     val value = row.apply(column).getOrElse(NullValue)
 
-    for {
+    val result = for {
       front <- decodeV.value.from(value).map(field[K](_))
       back  <- decodeT.value.from(row)
     } yield front :: back
+
+    result recoverWith {
+      case e: ValueException => RowDecoder.fail(s"Column $column: ${e.getMessage}")
+    }
 
   }
 
