@@ -108,6 +108,23 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
     }
   }
 
+  it should "decode a missing column into an Option" in { client: FixtureParam =>
+
+    import com.linecorp.falcon.mysql.generic._
+
+    case class Foo(id: Long, name: String, data: Option[Json])
+
+    val result = client.select("SELECT id, name FROM test WHERE id = 1") { row =>
+      row.as[Foo]
+    }
+
+    fromTwitter(result) map { o =>
+      o should matchPattern {
+        case List(Success(Foo(_,_,None))) =>
+      }
+    }
+  }
+
   it should "decode a row with custom decoder" in { client: FixtureParam =>
 
     case class Foo(id: Long, name: String, data: Json)
@@ -130,5 +147,4 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
       }
     }
   }
-
 }

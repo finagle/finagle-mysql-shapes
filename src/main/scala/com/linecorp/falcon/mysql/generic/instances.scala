@@ -3,6 +3,7 @@ package com.linecorp.falcon.mysql.generic
 import scala.util.{ Try, Success, Failure }
 import shapeless._
 import shapeless.labelled.{ field, FieldType }
+import com.twitter.finagle.mysql._
 import com.linecorp.falcon.mysql._
 
 trait Instances extends LowPriorityInstances {
@@ -17,15 +18,13 @@ trait Instances extends LowPriorityInstances {
     decodeT: Lazy[RowDecoder[T]]
   ): RowDecoder[FieldType[K, V] :: T] = RowDecoder.instance { row =>
     val column = witness.value.name
+    val value = row.apply(column).getOrElse(NullValue)
 
-    row.apply(column) match {
-      case Some(value) => for {
-        front <- decodeV.value.from(value).map(field[K](_))
-        back  <- decodeT.value.from(row)
-      } yield front :: back
+    for {
+      front <- decodeV.value.from(value).map(field[K](_))
+      back  <- decodeT.value.from(row)
+    } yield front :: back
 
-      case None => RowDecoder.fail(s"Column $column not found")
-    }
   }
 
   implicit def deriveLabelledGeneric[A, R](implicit
