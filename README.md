@@ -23,7 +23,6 @@ This project uses [shapeless][shapeless]'s generic representation of case classe
 First some imports:
 
 ```scala
-import com.linecorp.finagle.mysql.syntax._
 import com.linecorp.finagle.mysql.generic._
 import com.twitter.finagle.Mysql
 ```
@@ -35,7 +34,18 @@ case class User(firstName: String, lastName: String)
 
 val client = Mysql.client.withCredentials(...)
 
-val result = client.select("SELECT * FROM users WHERE id = 1")(_.as[User])
+val result = client.select("SELECT * FROM users WHERE id = 1") {
+  row => RowDecoder[User].from(row)
+}
+```
+
+For a slightly nicer syntax:
+```scala
+import com.linecorp.finagle.mysql.syntax._
+
+val result = client.select("SELECT * FROM users WHERE id = 1") {
+  row => row.as[User]
+}
 ```
 
 When that is not flexible enough, you can provide your own instances of `RowDecoder[A]`:
@@ -49,8 +59,6 @@ implicit val decoder: RowDecoder[User] = RowDecoder.instance { row =>
     l <- row.get[String]("lastName")
   } yield User(f, l)
 }
-
-val result = client.select("SELECT * FROM users WHERE id = 1")(_.as[User])
 ```
 
 See the [`RowSpec`](src/test/scala/com/linecorp/falcon/mysql/RowSpec.scala) integration test suite for more examples.
