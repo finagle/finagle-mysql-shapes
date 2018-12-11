@@ -48,7 +48,17 @@ val result = client.select("SELECT * FROM users WHERE id = 1") {
 }
 ```
 
-When that is not flexible enough, you can provide your own instances of `RowDecoder[A]`:
+A streamlined way of unpacking rows into tuples:
+```scala
+import com.linecorp.finagle.mysql.generic.tuples._
+
+val result = client.select("SELECT * FROM test WHERE id = 1") { row =>
+  row.as[(String, String)]
+}
+```
+
+
+You can also provide your own instance of `RowDecoder[A]`:
 
 ```scala
 import com.linecorp.finagle.mysql.RowDecoder
