@@ -1,4 +1,4 @@
-package com.linecorp.falcon.mysql
+package com.linecorp.finagle.mysql.shapes
 
 import com.dimafeng.testcontainers.{ ForAllTestContainer, MySQLContainer }
 import org.scalatest._

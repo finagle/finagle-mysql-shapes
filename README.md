@@ -1,6 +1,6 @@
-# finagle-mysql-generic
+# finagle-mysql-shapes
 
-This library adds support for boilerplate-free marshalling of rows to case classes to Twitter's [Finagle][Finagle] MySQL client.
+This library adds support to Twitter's [Finagle][Finagle] MySQL client for boilerplate-free marshalling of rows into case classes.
 
 
 ## Install
@@ -8,7 +8,7 @@ This library adds support for boilerplate-free marshalling of rows to case class
 To use this library configure your sbt project with the following line:
 
 ```sbt
-libraryDependencies += "com.linecorp" %% "finagle-mysql-generic" % "0.1.0"
+libraryDependencies += "com.linecorp" %% "finagle-mysql-shapes" % "0.1.0"
 ```
 
 ## Documentation
@@ -23,7 +23,7 @@ This project uses [shapeless][shapeless]'s generic representation of case classe
 First some imports:
 
 ```scala
-import com.linecorp.finagle.mysql.generic._
+import com.linecorp.finagle.mysql.shapes._
 import com.twitter.finagle.Mysql
 ```
 
@@ -50,7 +50,7 @@ val result = client.select("SELECT * FROM users WHERE id = 1") {
 
 A streamlined way of unpacking rows into tuples:
 ```scala
-import com.linecorp.finagle.mysql.generic.tuples._
+import com.linecorp.finagle.mysql.shapes.tuples._
 
 val result = client.select("SELECT * FROM test WHERE id = 1") { row =>
   row.as[(String, String)]

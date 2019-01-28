@@ -1,4 +1,4 @@
-package com.linecorp.falcon.mysql
+package com.linecorp.finagle.mysql.shapes
 
 import scala.util.{Try, Success, Failure}
 import com.twitter.finagle.mysql._

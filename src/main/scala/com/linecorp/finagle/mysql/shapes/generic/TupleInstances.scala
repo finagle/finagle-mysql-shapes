@@ -1,8 +1,8 @@
-package com.linecorp.falcon.mysql.generic
+package com.linecorp.finagle.mysql.shapes.generic
 
 import scala.util.{ Try, Success, Failure }
 import shapeless._
-import com.linecorp.falcon.mysql._
+import com.linecorp.finagle.mysql.shapes._
 
 trait TupleInstances {
 

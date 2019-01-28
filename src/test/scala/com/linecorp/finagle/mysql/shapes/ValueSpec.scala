@@ -1,10 +1,10 @@
-package com.linecorp.falcon.mysql
+package com.linecorp.finagle.mysql.shapes
 
 import org.scalatest._
 import scala.util.{Try, Success, Failure}
 import com.twitter.finagle.mysql._
 import com.twitter.finagle.mysql.Parameter._
-import com.linecorp.falcon.mysql.syntax._
+import com.linecorp.finagle.mysql.shapes.syntax._
 
 class ValueDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers {
 

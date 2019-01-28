@@ -1,11 +1,11 @@
-package com.linecorp.falcon.mysql
+package com.linecorp.finagle.mysql.shapes
 
 import org.scalatest._
 import scala.util.{Try, Success, Failure}
 import io.circe.{ Decoder, Json }
 import com.twitter.finagle.mysql._
-import com.linecorp.falcon.mysql.syntax._
-import com.linecorp.falcon.mysql.circe._
+import com.linecorp.finagle.mysql.shapes.syntax._
+import com.linecorp.finagle.mysql.shapes.circe._
 
 class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers {
 
@@ -18,7 +18,7 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
   it should "decode a row into a case class" in { client: FixtureParam =>
 
-    import com.linecorp.falcon.mysql.generic._
+    import com.linecorp.finagle.mysql.shapes.generic._
 
     case class Foo(id: Long, name: String, data: Json)
 
@@ -35,7 +35,7 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
   it should "decode a row into a nested record" in { client: FixtureParam =>
 
-    import com.linecorp.falcon.mysql.generic._
+    import com.linecorp.finagle.mysql.shapes.generic._
 
     case class Bar(id: Long, data: Json)
 
@@ -55,7 +55,7 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
   it should "decode a row with a Json column using an implicit decoder" in { client: FixtureParam =>
 
-    import com.linecorp.falcon.mysql.generic._
+    import com.linecorp.finagle.mysql.shapes.generic._
 
     case class Data(foo: String, bar: Boolean)
 
@@ -77,7 +77,7 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
   it should "decode a row into a tuple" in { client: FixtureParam =>
 
-    import com.linecorp.falcon.mysql.generic.tuples._
+    import com.linecorp.finagle.mysql.shapes.generic.tuples._
 
     val result = client.select("SELECT * FROM test WHERE id = 1") { row =>
       row.as[(Long, String, Json, java.sql.Timestamp)]
@@ -93,7 +93,7 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
   it should "decode a nullable column into an Option" in { client: FixtureParam =>
 
-    import com.linecorp.falcon.mysql.generic._
+    import com.linecorp.finagle.mysql.shapes.generic._
 
     case class Foo(id: Long, name: String, data: Option[Json])
 
@@ -110,7 +110,7 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
   it should "decode a missing column into an Option" in { client: FixtureParam =>
 
-    import com.linecorp.falcon.mysql.generic._
+    import com.linecorp.finagle.mysql.shapes.generic._
 
     case class Foo(id: Long, name: String, data: Option[Json])
 
