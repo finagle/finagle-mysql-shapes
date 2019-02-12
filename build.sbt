@@ -24,7 +24,6 @@ lazy val commonSettings = Seq(
 
 lazy val libraries = Seq(
   "com.twitter" %% "finagle-mysql" % finagleVersion,
-  "mysql" % "mysql-connector-java" % mysqlConnectorVersion,
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
   "com.chuusai" %% "shapeless" % shapelessVersion,
