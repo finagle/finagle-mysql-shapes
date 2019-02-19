@@ -30,7 +30,9 @@ lazy val libraries = Seq(
   "org.typelevel" %% "cats-core" % catsVersion,
   "org.scalatest" %%"scalatest" % scalaTestVersion % Test,
   "org.testcontainers" % "mysql" % testcontainersVersion % Test,
-  "com.dimafeng" %% "testcontainers-scala" % testcontainersScalaVersion % Test
+  "com.dimafeng" %% "testcontainers-scala" % testcontainersScalaVersion % Test,
+  "mysql" % "mysql-connector-java" % mysqlConnectorVersion % Test
+
 )
 
 lazy val root = (project in file("."))
