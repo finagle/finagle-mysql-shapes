@@ -74,6 +74,14 @@ object ValueDecoder {
     case _ => fail("failed to decode String")
   }
 
+  implicit val decodeSet: ValueDecoder[Set[String]] = instance {
+    case StringValue(s) => Success(s.split(",").toSet)
+    case RawValue(Type.Set, charset, _, bytes) if Charset.isUtf8(charset) =>
+      val s = new String(bytes, UTF_8)
+      Success(s.split(",").toSet)
+    case _ => fail("failed to decode Set[String]")
+  }
+
   implicit val decodeDate: ValueDecoder[Date] = instance {
     DateValue.unapply(_) match {
       case Some(date) => Success(date)
