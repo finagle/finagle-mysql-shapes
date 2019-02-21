@@ -38,6 +38,33 @@ trait Instances extends LowPriorityInstances {
     decode.from(_).map(gen.from)
   }
 
+  implicit def deriveEnumerationCNil : ValueDecoder[CNil] = ValueDecoder.instance {
+    _ => ValueDecoder.fail("Enumeration decoding failed")
+  }
+
+  implicit def deriveEnumerationCCons[K <: Symbol, V, R <: Coproduct](
+    implicit
+    witness: Witness.Aux[K],
+    decodeV: LabelledGeneric.Aux[V, HNil],
+    decodeR: ValueDecoder[R]
+  ): ValueDecoder[FieldType[K, V] :+: R] = ValueDecoder.instance { value =>
+    val name = witness.value.name
+
+    value match {
+      case StringValue(s) if s == name => Success(Inl(field[K](decodeV.from(HNil))))
+      case StringValue(_)              => decodeR.from(value).map(Inr(_))
+      case _                           => ValueDecoder.fail("failed to decode Enumeration")
+    }
+  }
+
+  implicit def deriveEnumeration[A, Repr <: Coproduct](
+    implicit
+    gen: LabelledGeneric.Aux[A, Repr],
+    decode: ValueDecoder[Repr]
+  ): ValueDecoder[A] = ValueDecoder.instance {
+    decode.from(_).map(gen.from)
+  }
+
 }
 
 trait LowPriorityInstances {

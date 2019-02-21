@@ -31,9 +31,10 @@ trait MysqlSuite extends ForAllTestContainer { self: fixture.AsyncTestSuite =>
   def schema: String =
     """CREATE TABLE test
          (
-           id   SERIAL,
-           name VARCHAR(40) NOT NULL,
-           data JSON,
+           id        SERIAL,
+           name      VARCHAR(40) NOT NULL,
+           metadata  JSON,
+           fruit     ENUM('Kiwi', 'Melon', 'Mango', 'Apple'),
            create_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
          )
        engine=innodb
@@ -52,7 +53,7 @@ trait MysqlSuite extends ForAllTestContainer { self: fixture.AsyncTestSuite =>
       .newRichClient(s"${url.getHost}:${url.getPort}")
 
     val data =
-      client.prepare("INSERT INTO test (id, name, data) VALUES(?, ?, ?)")
+      client.prepare("INSERT INTO test (id, name, metadata, fruit) VALUES(?, ?, ?, ?)")
 
     Await.result(client.modify(schema))
     Await.result(populate(data))

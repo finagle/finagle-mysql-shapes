@@ -1,7 +1,7 @@
 package com.linecorp.finagle.mysql.shapes
 
 import org.scalatest._
-import scala.util.{Try, Success, Failure}
+import scala.util.Success
 import io.circe.{ Decoder, Json }
 import com.twitter.finagle.mysql._
 import com.linecorp.finagle.mysql.shapes.syntax._
@@ -11,16 +11,17 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
   override def populate(data: PreparedStatement) =
     for {
-      _ <- data.modify(1, "test", "{}")
-      _ <- data.modify(2, "some", """{"foo": "bar", "bar": true}""")
-      _ <- data.modify(3, "some", null)
+      _ <- data.modify(1, "test", "{}", null)
+      _ <- data.modify(2, "some", """{"foo": "bar", "bar": true}""", null)
+      _ <- data.modify(3, "some", null, null)
+      _ <- data.modify(4, "some", "{}", "Mango")
     } yield ()
 
   it should "decode a row into a case class" in { client: FixtureParam =>
 
     import com.linecorp.finagle.mysql.shapes.generic._
 
-    case class Foo(id: Long, name: String, data: Json)
+    case class Foo(id: Long, name: String, metadata: Json)
 
     val result = client.select("SELECT * FROM test WHERE id = 1") { row =>
       row.as[Foo]
@@ -37,7 +38,7 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
     import com.linecorp.finagle.mysql.shapes.generic._
 
-    case class Bar(id: Long, data: Json)
+    case class Bar(id: Long, metadata: Json)
 
     case class Foo(name: String, bar: Bar)
 
@@ -62,7 +63,7 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
     implicit val decodeData: Decoder[Data] =
       Decoder.forProduct2("foo", "bar")(Data.apply)
 
-    case class Foo(id: Long, name: String, data: Data)
+    case class Foo(id: Long, name: String, metadata: Data)
 
     val result = client.select("SELECT * FROM test WHERE id = 2") { row =>
       row.as[Foo]
@@ -79,13 +80,13 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
     import com.linecorp.finagle.mysql.shapes.generic.tuples._
 
-    val result = client.select("SELECT * FROM test WHERE id = 1") { row =>
-      row.as[(Long, String, Json, java.sql.Timestamp)]
+    val result = client.select("SELECT * FROM test WHERE id = 4") { row =>
+      row.as[(Long, String, Json, String, java.sql.Timestamp)]
     }
 
     fromTwitter(result) map { o =>
       o should matchPattern {
-        case List(Success((_,_,_,_))) =>
+        case List(Success((_,_,_,_,_))) =>
       }
     }
   }
@@ -95,7 +96,7 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
     import com.linecorp.finagle.mysql.shapes.generic._
 
-    case class Foo(id: Long, name: String, data: Option[Json])
+    case class Foo(id: Long, name: String, metadata: Option[Json])
 
     val result = client.select("SELECT * FROM test WHERE id = 3") { row =>
       row.as[Foo]
@@ -112,7 +113,7 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
     import com.linecorp.finagle.mysql.shapes.generic._
 
-    case class Foo(id: Long, name: String, data: Option[Json])
+    case class Foo(id: Long, name: String, metadata: Option[Json])
 
     val result = client.select("SELECT id, name FROM test WHERE id = 1") { row =>
       row.as[Foo]
@@ -127,13 +128,13 @@ class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers
 
   it should "decode a row with custom decoder" in { client: FixtureParam =>
 
-    case class Foo(id: Long, name: String, data: Json)
+    case class Foo(id: Long, name: String, metadata: Json)
 
     implicit val decoder: RowDecoder[Foo] = RowDecoder.instance { row =>
       for {
         id   <- row.get[Long]("id")
         name <- row.get[String]("name")
-        data <- row.get[Json]("data")
+        data <- row.get[Json]("metadata")
       } yield Foo(id, name, data)
     }
 
