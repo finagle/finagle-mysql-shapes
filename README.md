@@ -56,6 +56,19 @@ val result = client.select("SELECT * FROM test WHERE id = 1") { row =>
   row.as[(String, String)]
 }
 ```
+Decode `ENUM` columns into ADTs:
+```scala
+import com.linecorp.finagle.mysql.shapes.generic._
+
+sealed trait Fruit
+
+case object Melon extends Fruit
+case object Mango extends Fruit
+
+val result = client.select("SELECT * FROM test WHERE id = 4") { row =>
+  row.get[Fruit]("fruit")
+}
+```
 
 
 You can also provide your own instance of `RowDecoder[A]`:
