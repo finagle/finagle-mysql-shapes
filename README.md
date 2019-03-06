@@ -1,6 +1,6 @@
 # finagle-mysql-shapes
 
-This library adds support to Twitter's [Finagle][Finagle] MySQL client for boilerplate-free marshalling of rows into case classes.
+This library adds support to Twitter's [Finagle][Finagle] MySQL client for boilerplate-free transformation of rows into case classes.
 
 
 ## Install
@@ -56,12 +56,12 @@ val result = client.select("SELECT * FROM test WHERE id = 1") { row =>
   row.as[(String, String)]
 }
 ```
-Decode `ENUM` columns into sealed traits:
+
+Decoding `ENUM` columns into sealed trait hierarchies:
 ```scala
 import com.linecorp.finagle.mysql.shapes.generic._
 
 sealed trait Fruit
-
 case object Melon extends Fruit
 case object Mango extends Fruit
 
