@@ -1,10 +1,10 @@
-package com.linecorp.finagle.mysql.shapes
+package com.linecorp.finagle.mysql
 
 import org.scalatest._
 import scala.util.{Try, Success, Failure}
 import com.twitter.finagle.mysql._
 import com.twitter.finagle.mysql.Parameter._
-import com.linecorp.finagle.mysql.shapes.syntax._
+import com.linecorp.finagle.mysql.syntax._
 
 class ValueDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers {
 
@@ -61,7 +61,7 @@ class ValueDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matche
 
   it should "decode an enumeration into a sealed trait" in { client: FixtureParam =>
 
-    import com.linecorp.finagle.mysql.shapes.generic._
+    import com.linecorp.finagle.mysql.generic._
 
     sealed trait Fruit
     case object Melon extends Fruit

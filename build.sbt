@@ -1,4 +1,4 @@
-val finagleVersion = "18.7.0"
+val finagleVersion = "19.1.0"
 val mysqlConnectorVersion = "5.1.39"
 val circeVersion = "0.9.3"
 val catsVersion = "1.1.0"
@@ -38,9 +38,9 @@ lazy val libraries = Seq(
 lazy val root = (project in file("."))
   .settings(
     commonSettings,
-    name := "falcon",
+    name := "finagle-mysql-shapes",
     organization := "com.linecorp",
-    version := "0.3.1-SNAPSHOT",
+    version := "0.4.0-SNAPSHOT",
     publishMavenStyle := true,
     libraryDependencies ++= libraries,
     scalafixSettings

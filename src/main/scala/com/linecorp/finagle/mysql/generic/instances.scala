@@ -1,10 +1,10 @@
-package com.linecorp.finagle.mysql.shapes.generic
+package com.linecorp.finagle.mysql.generic
 
 import scala.util.{ Try, Success, Failure }
 import shapeless._
 import shapeless.labelled.{ field, FieldType }
 import com.twitter.finagle.mysql._
-import com.linecorp.finagle.mysql.shapes._
+import com.linecorp.finagle.mysql._
 
 trait Instances extends LowPriorityInstances {
 

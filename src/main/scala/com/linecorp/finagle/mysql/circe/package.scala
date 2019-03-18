@@ -1,4 +1,4 @@
-package com.linecorp.finagle.mysql.shapes
+package com.linecorp.finagle.mysql
 
 import scala.util.Try
 import io.circe.Decoder

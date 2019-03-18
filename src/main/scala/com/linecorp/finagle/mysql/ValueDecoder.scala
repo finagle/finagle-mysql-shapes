@@ -1,4 +1,4 @@
-package com.linecorp.finagle.mysql.shapes
+package com.linecorp.finagle.mysql
 
 import scala.util.{ Try, Success, Failure }
 import com.twitter.finagle.mysql._
@@ -76,7 +76,7 @@ object ValueDecoder {
 
   implicit val decodeStringSet: ValueDecoder[Set[String]] = instance {
     case StringValue(s) => Success(s.split(",").toSet)
-    case RawValue(Type.Set, charset, _, bytes) if Charset.isUtf8(charset) =>
+    case RawValue(Type.Set, charset, _, bytes) if MysqlCharset.isUtf8(charset) =>
       val s = new String(bytes, UTF_8)
       Success(s.split(",").toSet)
     case _ => fail("failed to decode Set[String]")
@@ -129,9 +129,9 @@ object ValueDecoder {
   private[this] val JsonType: Short = 0xf5
 
   implicit def decodeJson[T: JsonDecoder] = instance {
-    case RawValue(JsonType, charset, _, bytes) if Charset.isUtf8(charset) =>
+    case RawValue(JsonType, charset, _, bytes) if MysqlCharset.isUtf8(charset) =>
       JsonDecoder[T].decode(new String(bytes, UTF_8))
-    case RawValue(JsonType, Charset.Binary, _, bytes) =>
+    case RawValue(JsonType, MysqlCharset.Binary, _, bytes) =>
       JsonDecoder[T].decode(new String(bytes, UTF_8))
     case StringValue(str) =>
       JsonDecoder[T].decode(str)
