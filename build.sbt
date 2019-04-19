@@ -45,11 +45,3 @@ lazy val root = (project in file("."))
     libraryDependencies ++= libraries,
     scalafixSettings
   )
-
-publishTo := {
-  val line = "http://repo.linecorp.com/content/repositories/"
-  if (isSnapshot.value)
-    Some("snapshots" at line + "nightly")
-  else
-    Some("releases"  at line + "internal")
-}
