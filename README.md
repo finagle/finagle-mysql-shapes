@@ -1,4 +1,5 @@
 # finagle-mysql-shapes
+[![Build Status](https://travis-ci.org/finagle/finagle-mysql-shapes.svg?branch=master)](https://travis-ci.org/finagle/finagle-mysql-shapes)
 
 This library adds support to Twitter's [Finagle][Finagle] MySQL client for boilerplate-free transformation of rows into case classes.
 
