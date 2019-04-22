@@ -28,13 +28,23 @@ import com.twitter.finagle.Mysql
 
 val client = Mysql.client.withCredentials(...)
 ```
-
+and the following relational schema:
+```sql
+CREATE TABLE users
+  (
+    firstName VARCHAR(255), NOT NULL
+    lastName VARCHAR(255) NOT NULL,
+    address VARCHAR(255),
+    fruit ENUM('Melon', 'Mango') NOT NULL,
+    create_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  ) engine=innodb DEFAULT charset=utf8
+```
 Marshalling [rows][Row] into case classes:
 
 ```scala
 import com.linecorp.finagle.mysql.generic._
 
-case class User(firstName: String, lastName: String)
+case class User(firstName: String, lastName: String, address: Option[String])
 
 val result = client.select("SELECT * FROM users WHERE id = 1") {
   row => RowDecoder[User].from(row)
@@ -54,7 +64,7 @@ A streamlined way of unpacking rows into tuples:
 ```scala
 import com.linecorp.finagle.mysql.generic.tuples._
 
-val result = client.select("SELECT * FROM test WHERE id = 1") { row =>
+val result = client.select("SELECT * FROM users WHERE id = 1") { row =>
   row.as[(String, String)]
 }
 ```
@@ -67,7 +77,7 @@ sealed trait Fruit
 case object Melon extends Fruit
 case object Mango extends Fruit
 
-val result = client.select("SELECT fruit FROM test WHERE id = 4") { row =>
+val result = client.select("SELECT fruit FROM users WHERE id = 4") { row =>
   row.get[Fruit](column = "fruit")
 }
 ```
