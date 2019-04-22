@@ -21,19 +21,20 @@ libraryDependencies += "com.linecorp" %% "finagle-mysql-shapes" % "0.1.0"
 
 This project uses [shapeless][shapeless]'s generic representation of case classes for automatic derivation of [`RowDecoder[A]`](src/main/scala/com/linecorp/falcon/mysql/RowDecoder.scala) instances.
 
-First some imports:
+Given a client, e.g.:
 
 ```scala
-import com.linecorp.finagle.mysql.shapes._
 import com.twitter.finagle.Mysql
+
+val client = Mysql.client.withCredentials(...)
 ```
 
 Marshalling [rows][Row] into case classes:
 
 ```scala
-case class User(firstName: String, lastName: String)
+import com.linecorp.finagle.mysql.generic._
 
-val client = Mysql.client.withCredentials(...)
+case class User(firstName: String, lastName: String)
 
 val result = client.select("SELECT * FROM users WHERE id = 1") {
   row => RowDecoder[User].from(row)
@@ -51,7 +52,7 @@ val result = client.select("SELECT * FROM users WHERE id = 1") {
 
 A streamlined way of unpacking rows into tuples:
 ```scala
-import com.linecorp.finagle.mysql.shapes.tuples._
+import com.linecorp.finagle.mysql.generic.tuples._
 
 val result = client.select("SELECT * FROM test WHERE id = 1") { row =>
   row.as[(String, String)]
@@ -60,7 +61,7 @@ val result = client.select("SELECT * FROM test WHERE id = 1") { row =>
 
 Decoding `ENUM` columns into sealed trait hierarchies:
 ```scala
-import com.linecorp.finagle.mysql.shapes.generic._
+import com.linecorp.finagle.mysql.generic._
 
 sealed trait Fruit
 case object Melon extends Fruit
