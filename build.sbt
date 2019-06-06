@@ -5,7 +5,7 @@ val circeVersion = "0.11.1"
 val catsVersion = "1.6.0"
 val shapelessVersion = "2.3.3"
 val scalaTestVersion = "3.0.7"
-val testcontainersVersion = "1.8.3"
+val testcontainersVersion = "1.11.3"
 val testcontainersScalaVersion = "0.25.0"
 
 lazy val commonSettings = Seq(
