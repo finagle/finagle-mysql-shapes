@@ -6,7 +6,7 @@ val catsVersion = "1.6.1"
 val shapelessVersion = "2.3.3"
 val scalaTestVersion = "3.0.8"
 val testcontainersVersion = "1.8.3"
-val testcontainersScalaVersion = "0.27.0"
+val testcontainersScalaVersion = "0.28.0"
 
 lazy val commonSettings = Seq(
   scalaVersion := "2.12.4",
