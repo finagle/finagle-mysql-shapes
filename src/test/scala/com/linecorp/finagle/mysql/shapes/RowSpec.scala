@@ -6,8 +6,10 @@ import io.circe.{ Decoder, Json }
 import com.twitter.finagle.mysql._
 import com.linecorp.finagle.mysql.syntax._
 import com.linecorp.finagle.mysql.circe._
+import org.scalatest.flatspec
+import org.scalatest.matchers.should.Matchers
 
-class RowDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers {
+class RowDecoderSpec extends flatspec.FixtureAsyncFlatSpec with MysqlSuite with Matchers {
 
   override def populate(data: PreparedStatement) =
     for {
