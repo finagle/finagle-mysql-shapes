@@ -5,8 +5,10 @@ import scala.util.{Try, Success, Failure}
 import com.twitter.finagle.mysql._
 import com.twitter.finagle.mysql.Parameter._
 import com.linecorp.finagle.mysql.syntax._
+import org.scalatest.flatspec
+import org.scalatest.matchers.should.Matchers
 
-class ValueDecoderSpec extends fixture.AsyncFlatSpec with MysqlSuite with Matchers {
+class ValueDecoderSpec extends flatspec.FixtureAsyncFlatSpec with MysqlSuite with Matchers {
 
   override def populate(data: PreparedStatement) =
     for {
