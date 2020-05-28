@@ -4,8 +4,8 @@ val mysqlConnectorVersion = "8.0.19"
 val circeVersion = "0.13.0"
 val catsVersion = "2.1.0"
 val shapelessVersion = "2.3.3"
-val scalaTestVersion = "3.1.2"
-val testcontainersVersion = "1.12.5"
+val scalaTestVersion = "3.1.0"
+val testcontainersVersion = "1.14.2"
 val testcontainersScalaVersion = "0.34.2"
 
 lazy val commonSettings = Seq(
