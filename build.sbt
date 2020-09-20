@@ -1,12 +1,12 @@
 
-val finagleVersion = "20.8.1"
-val mysqlConnectorVersion = "8.0.20"
+val finagleVersion = "20.6.0"
+val mysqlConnectorVersion = "8.0.21"
 val circeVersion = "0.13.0"
 val catsVersion = "2.1.0"
 val shapelessVersion = "2.3.3"
-val scalaTestVersion = "3.1.2"
+val scalaTestVersion = "3.2.1"
 val testcontainersVersion = "1.14.3"
-val testcontainersScalaVersion = "0.38.0"
+val testcontainersScalaVersion = "0.38.3"
 
 lazy val commonSettings = Seq(
   scalaVersion := "2.12.4",
