@@ -4,7 +4,7 @@ val mysqlConnectorVersion = "8.0.21"
 val circeVersion = "0.13.0"
 val catsVersion = "2.1.0"
 val shapelessVersion = "2.3.3"
-val scalaTestVersion = "3.2.2"
+val scalaTestVersion = "3.2.9"
 val testcontainersVersion = "1.14.3"
 val testcontainersScalaVersion = "0.38.3"
 
