@@ -9,7 +9,7 @@ val testcontainersVersion = "1.14.3"
 val testcontainersScalaVersion = "0.38.3"
 
 lazy val commonSettings = Seq(
-  scalaVersion := "2.12.4",
+  scalaVersion := "2.12.17",
   scalacOptions ++= Seq(
     "-deprecation",
     "-language:implicitConversions",
