@@ -1,7 +1,7 @@
 
 val finagleVersion = "20.6.0"
 val mysqlConnectorVersion = "8.0.21"
-val circeVersion = "0.13.0"
+val circeVersion = "0.14.3"
 val catsVersion = "2.1.0"
 val shapelessVersion = "2.3.3"
 val scalaTestVersion = "3.2.2"
