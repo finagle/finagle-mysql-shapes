@@ -20,7 +20,7 @@ lazy val commonSettings = Seq(
     "-Ywarn-infer-any",
     "-Ypartial-unification"
   ),
-  scalacOptions in (Compile, console) ~= (_.filterNot(_ == "-Ywarn-unused:imports"))
+  (Compile / console / scalacOptions) ~= (_.filterNot(_ == "-Ywarn-unused:imports"))
 )
 
 lazy val libraries = Seq(
